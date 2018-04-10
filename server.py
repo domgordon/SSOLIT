@@ -164,8 +164,24 @@ def index():
 # The functions for each app.route need to have different names
 #
 
-@app.route('/filter', methods=['POST'])
-def filter():
+@app.route('/filter_sem', methods=['POST'])
+def filter_sem():
+  sem = request.form['semester']
+  print sem
+  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester=%s",sem)
+  courses = []
+  for result in cursor:
+    row = []
+    for i in range(0,len(result)):
+        row.append(result[i])
+    courses.append(row)
+  cursor.close()
+  context = dict(data = courses)
+  return render_template("index.html", **context)
+
+
+@app.route('/filter_dept', methods=['POST'])
+def filter_dept():
   dept = request.form['department']
   print dept
   cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname=%s",dept)
@@ -179,6 +195,21 @@ def filter():
   context = dict(data = courses)
   return render_template("index.html", **context)
 
+
+@app.route('/filter_cred', methods=['POST'])
+def filter_cred():
+  cred = request.form['credits']
+  print cred
+  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits=%s",cred)
+  courses = []
+  for result in cursor:
+    row = []
+    for i in range(0,len(result)):
+        row.append(result[i])
+    courses.append(row)
+  cursor.close()
+  context = dict(data = courses)
+  return render_template("index.html", **context)
 
 @app.route('/another')
 def another():
