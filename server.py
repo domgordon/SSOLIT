@@ -185,6 +185,31 @@ def another():
   return render_template("another.html")
 
 
+@app.route('/new_user')
+def new_user():
+  return render_template("new_user.html")
+
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+  sid = request.form['sid']
+  s_first_name = request.form['firstname']
+  s_last_name = request.form['lastname']
+  sname = request.form['sname']
+  g.conn.execute('INSERT INTO students_attends VALUES (%s, %s, %s, %s)', sid, s_first_name, s_last_name, sname)
+  return redirect('/profile')
+
+
+@app.route('/existing_user')
+def existing_user():
+  return render_template("existing_user.html")
+
+
+@app.route('/profile')
+def profile():
+  return render_template("profile.html")
+
+
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
