@@ -94,6 +94,18 @@ def teardown_request(exception):
 # see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
+
+def courselister(query):
+  cursor = g.conn.execute(query)
+  courses = []
+  for result in cursor:
+    row = []
+    for i in range(0,len(result)):
+        row.append(result[i])
+    courses.append(row)
+  cursor.close()
+  return courses
+  
 @app.route('/')
 def index():
   """
@@ -112,14 +124,8 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid")
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
+  courses = courselister(query)
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -168,14 +174,9 @@ def index():
 def filter_sem():
   sem = request.form['semester']
   print sem
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester=%s",sem)
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester='%s'" % (sem)
+  
+  courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
 
@@ -184,14 +185,8 @@ def filter_sem():
 def filter_dept():
   dept = request.form['department']
   print dept
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname=%s",dept)
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
+  courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
 
@@ -200,14 +195,17 @@ def filter_dept():
 def filter_cred():
   cred = request.form['credits']
   print cred
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits=%s",cred)
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("index.html", **context)
+
+@app.route('/search', methods=['POST'])
+def search():
+  term = request.form['searchterm']
+  print term
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
+  courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
 
@@ -221,6 +219,21 @@ def another():
 def add():
   cname = request.form['course']
   g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
+  return redirect('/')
+
+
+@app.route('/enroll', methods=['POST'])
+def enroll():
+  uni = request.form['uni']
+  cnum = request.form['cnum']
+  snum = request.form['snum']
+  sem = request.form['sem']
+  print uni
+  print cnum
+  print snum
+  print sem
+  query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
+  g.conn.execute(query)
   return redirect('/')
 
 #@app.route('/filter')

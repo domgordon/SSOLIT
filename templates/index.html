@@ -8,7 +8,16 @@
 
 
 <body>
-  <h1>All Courses Offered</h1>
+  <h1>Courses Offered</h1>
+  <p><a href="/">View all courses</a></p>
+  
+<form method="POST" action="/search">
+  <p>Search by course number: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
+  </form>
+
+  <form method="POST" action="/filter_dept">
+  <p>Search by department: <input type="text" name="department"> <input type="submit" value="Search"></p>
+  </form>
 
   <form method="POST" action="/filter_sem">
   <p>Filter by semester:
@@ -27,11 +36,6 @@
   </p>
   </form>
 
-  <form method="POST" action="/filter_dept">
-  <p>Filter by department: <input type="text" name="department"> <input type="submit" value="Filter by Department"></p>
-  </form>
-
-  
   <form method="POST" action="/filter_cred">
   <p>Filter by number of credits:
   <select name="credits">
@@ -74,6 +78,26 @@
     {% endfor %}
   </table>
   </div>
+
+<p>Ready to enroll?</p>
+<form method="POST" action="/enroll">
+<p>Enter your UNI <input type="text" name="uni">
+<p>Enter Course number of the course you would like to enroll in <input type="text" name="cnum">
+<p>Enter section number of the course you would like to enroll in <input type="text" name="snum"> 
+<p>Enter semester of the course you would like to enroll in 
+  <select name="sem">
+    <option value="" selected disabled hidden`>Choose here</option>
+    <option value="FALL18">Fall 2018</option>
+    <option value="SPRING18">Spring 2018</option>
+    <option value="FALL17">Fall 2017</option>
+    <option value="SPRING17">Spring 2017</option>
+    <option value="FALL16">Fall 2016</option>
+    <option value="SPRING16">Spring 2016</option>
+    <option value="FALL15">Fall 2015</option>
+    <option value="SPRING15">Spring 2015</option>
+  </select>
+<input type="submit" value="Submit"></p>
+</form>
 
 <p><a href="another">Go to the other page</a></p>
 
