@@ -109,21 +109,16 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
 
-
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT * from courses_offered C, sections_available_taught S WHERE S.cid=C.cid")
+  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid")
   courses = []
-  #i=0
   for result in cursor:
     row = []
     for i in range(0,len(result)):
-        #courses.append(result[i])
         row.append(result[i])
     courses.append(row)
-    #courses.append(result['cname'])  # can also be accessed using result[0]
-    #i+=1
   cursor.close()
 
   #
@@ -154,8 +149,7 @@ def index():
   #
   context = dict(data = courses)
 
-
-  #
+ #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
@@ -169,6 +163,23 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
+
+@app.route('/filter', methods=['POST'])
+def filter():
+  dept = request.form['department']
+  print dept
+  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname=%s",dept)
+  courses = []
+  for result in cursor:
+    row = []
+    for i in range(0,len(result)):
+        row.append(result[i])
+    courses.append(row)
+  cursor.close()
+  context = dict(data = courses)
+  return render_template("index.html", **context)
+
+
 @app.route('/another')
 def another():
   return render_template("another.html")
@@ -181,7 +192,24 @@ def add():
   g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
   return redirect('/')
 
-
+#@app.route('/filter')
+#def filter():
+ # dept = request.form['department']
+ # print dept
+ # cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='Computer Science'")
+#  courses = []
+  #i=0
+#  for result in cursor:
+#    row = []
+#    for i in range(0,len(result)):
+        #courses.append(result[i])
+#        row.append(result[i])
+#    courses.append(row)
+    #courses.append(result['cname'])  # can also be accessed using result[0]
+    #i+=1
+#  cursor.close()
+#  return render_template("index.html", **context)
+  
 @app.route('/login')
 def login():
     abort(401)
