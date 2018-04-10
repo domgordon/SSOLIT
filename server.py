@@ -50,7 +50,7 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
   id serial,
   name text
 );""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+#engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -113,10 +113,11 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
+  cursor = g.conn.execute("SELECT cid, cname FROM courses_offered")
+  courses = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    courses.append(result['cid'])
+    courses.append(result['cname'])  # can also be accessed using result[0]
   cursor.close()
 
   #
@@ -145,7 +146,7 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  context = dict(data = courses)
 
 
   #
@@ -170,8 +171,8 @@ def another():
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
-  name = request.form['name']
-  g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
+  cname = request.form['course']
+  g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
   return redirect('/')
 
 
