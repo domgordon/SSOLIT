@@ -124,7 +124,7 @@ def index():
   #
   # example of a database query
   #
-  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
   courses = courselister(query)
 
   #
@@ -170,11 +170,21 @@ def index():
 # The functions for each app.route need to have different names
 #
 
+
+@app.route('/profile')
+def profile():
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='dlg2156' and E.cid=S.cid"
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("profile.html", **context)
+
+
+
 @app.route('/filter_sem', methods=['POST'])
 def filter_sem():
   sem = request.form['semester']
   print sem
-  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester='%s'" % (sem)
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester='%s'" % (sem)
   
   courses = courselister(query)
   context = dict(data = courses)
@@ -185,7 +195,7 @@ def filter_sem():
 def filter_dept():
   dept = request.form['department']
   print dept
-  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
   courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
@@ -195,7 +205,7 @@ def filter_dept():
 def filter_cred():
   cred = request.form['credits']
   print cred
-  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
   courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
@@ -204,7 +214,7 @@ def filter_cred():
 def search():
   term = request.form['searchterm']
   print term
-  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
+  query = "SELECT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
   courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
@@ -234,7 +244,7 @@ def enroll():
   print sem
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
   g.conn.execute(query)
-  return redirect('/')
+  return redirect('/profile')
 
 #@app.route('/filter')
 #def filter():

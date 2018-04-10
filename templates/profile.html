@@ -1,0 +1,43 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <p><a href="/">View all courses</a></p>
+  <h1>My Courses</h1>
+
+<div>
+  <table style = "width:100%">
+    <tr>
+        <th>Number</th>
+        <th>Name</th>
+        <th>Credits</th>
+        <th>Department</th>
+        <th>Semester</th>
+        <th>Days</th>
+        <th>Time</th>
+        <th>Professor</th>
+    </tr>
+    {% for n in data %}
+    <tr>
+        {% for i in n %}
+        <td>
+        {{i}}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+
+
+<p><a href="another">Go to the other page</a></p>
+</body>
+</html>
+
+
