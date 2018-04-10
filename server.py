@@ -113,11 +113,17 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT cid, cname FROM courses_offered")
+  cursor = g.conn.execute("SELECT * from courses_offered C, sections_available_taught S WHERE S.cid=C.cid")
   courses = []
+  #i=0
   for result in cursor:
-    courses.append(result['cid'])
-    courses.append(result['cname'])  # can also be accessed using result[0]
+    row = []
+    for i in range(0,len(result)):
+        #courses.append(result[i])
+        row.append(result[i])
+    courses.append(row)
+    #courses.append(result['cname'])  # can also be accessed using result[0]
+    #i+=1
   cursor.close()
 
   #

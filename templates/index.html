@@ -8,13 +8,20 @@
 
 
 <body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
+  <h1>All Courses Offered</h1>
 
   <div>
+  <table>
     {% for n in data %}
-    <div>{{n}}</div>
+    <tr>
+        {% for i in n %}
+        <td>
+        {{i}}
+        </td>
+        {% endfor %}
+    </th>
     {% endfor %}
+  </table>
   </div>
 
 <p><a href="another">Go to the other page</a></p>
