@@ -56,8 +56,11 @@
  
 
   <div>
+  <form method="POST" action="/enroll2">
   <table style = "width:100%">
-    <tr>
+    <thead> 
+      <tr>
+        <th></th>
         <th>Course #</th>
         <th>Name</th>
         <th>Credits</th>
@@ -67,38 +70,30 @@
         <th>Days</th>
 	<th>Time</th>
         <th>Professor</th>
-    </tr>
+      </tr>
+    </thead>
+    <tbody>
     {% for n in data %}
     <tr>
+        <td>
+           <div class="radio">
+             <input type="radio" id='regular' name="optradio" value={{n[0]}},{{n[4]}},{{n[5]}}>
+           </div>
+        </td>
         {% for i in n %}
         <td>
-        {{i}}
+           <div class="radiotext">
+             {{i}}
+           </div>
         </td>
         {% endfor %}
     </tr>
     {% endfor %}
+    </tbody>
   </table>
+  <input type="submit" value="Enroll in this course">
+  </form>
   </div>
-
-<p>Ready to enroll?</p>
-<form method="POST" action="/enroll">
-<p>Enter your UNI <input type="text" name="uni">
-<p>Enter Course number of the course you would like to enroll in <input type="text" name="cnum">
-<p>Enter section number of the course you would like to enroll in <input type="text" name="snum"> 
-<p>Enter semester of the course you would like to enroll in 
-  <select name="sem">
-    <option value="" selected disabled hidden`>Choose here</option>
-    <option value="FALL18">Fall 2018</option>
-    <option value="SPRING18">Spring 2018</option>
-    <option value="FALL17">Fall 2017</option>
-    <option value="SPRING17">Spring 2017</option>
-    <option value="FALL16">Fall 2016</option>
-    <option value="SPRING16">Spring 2016</option>
-    <option value="FALL15">Fall 2015</option>
-    <option value="SPRING15">Spring 2015</option>
-  </select>
-<input type="submit" value="Submit"></p>
-</form>
 
 <p><a href="another">Go to the other page</a></p>
 
