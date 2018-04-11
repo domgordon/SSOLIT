@@ -16,6 +16,7 @@ Read about it online.
 
 import os
 from sqlalchemy import *
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
 
@@ -274,7 +275,10 @@ def enroll():
   sem = resp[2]
   uni = 'dlg2156'
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
-  g.conn.execute(query)
+  try:
+    g.conn.execute(query)
+  except IntegrityError:
+    print "ALREADY ENROLLED"
   return redirect('/profile')
 
 @app.route('/enroll2', methods=['POST'])
@@ -288,7 +292,10 @@ def enroll2():
   uni = 'dlg2156'
   if request.form['submit'] == "Enroll in this course":
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
-    g.conn.execute(query) 
+    try:
+      g.conn.execute(query)
+    except IntegrityError:
+      print "ALREADY ENROLLED"
     return redirect('/profile')
   else:
     return more(cnum,snum,sem)
