@@ -231,22 +231,6 @@ def add():
   g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
   return redirect('/')
 
-
-@app.route('/enroll', methods=['POST'])
-def enroll():
-  uni = request.form['uni']
-  cnum = request.form['cnum']
-  snum = request.form['snum']
-  sem = request.form['sem']
-  print uni
-  print cnum
-  print snum
-  print sem
-  query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
-  g.conn.execute(query)
-  return redirect('/profile')
-
-
 @app.route('/enroll2', methods=['POST'])
 def enroll2():
   print "HERE!!!!!"
@@ -256,9 +240,23 @@ def enroll2():
   snum = resp[1]
   sem = resp[2]
   uni = 'dlg2156'
-  query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
-  g.conn.execute(query) 
-  return redirect('/profile')
+  if request.form['submit'] == "Enroll in this course":
+    query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
+    g.conn.execute(query) 
+    return redirect('/profile')
+  else:
+    return more(cnum,snum,sem)
+
+@app.route('/more', methods=['POST'])
+def more(cnum,snum,sem):
+  query1 = "SELECT * from sections_available_taught S, courses_offered C WHERE S.cid=C.cid AND C.cid='%s' AND S.section_n='%s' AND S.semester='%s'" %(cnum,snum,sem)
+  info = courselister(query1)
+  query2 = "SELECT St.s_first_name, St.s_last_name, St.sid FROM students_attends St, enrolled_in E WHERE E.cid='%s' AND E.section_n='%s' AND E.semester='%s' AND E.sid=St.sid" %(cnum,snum,sem)
+  students = courselister(query2)
+  fin = [info,students]
+  #fin = students
+  context = dict(data = fin)
+  return render_template("more.html", **context)
 
 
 #@app.route('/filter')
