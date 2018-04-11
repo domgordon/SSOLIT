@@ -18,12 +18,13 @@ import os
 from sqlalchemy import *
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, flash
 
 global USER
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
+app.secret_key = 'some_secret'
 
 
 #
@@ -260,6 +261,7 @@ def check_user():
       url = '/profile?user=' + sid
       return redirect(url)
   print "nah not there"
+  flash('This student ID does not exist.')
   return render_template("existing_user.html")
 
 
@@ -285,6 +287,10 @@ def enroll():
     g.conn.execute(query)
   except IntegrityError:
     print "ALREADY ENROLLED"
+    flash('You are already enrolled in this course.')
+    return redirect('/profile')
+  stmt = 'You have been successfully enrolled in ' + cnum
+  flash(stmt)
   return redirect('/profile')
 
 @app.route('/enroll2', methods=['POST'])
@@ -300,8 +306,11 @@ def enroll2():
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
     try:
       g.conn.execute(query)
+      stmt = 'You have been successfully enrolled in ' + cnum
+      flash(stmt)
     except IntegrityError:
       print "ALREADY ENROLLED"
+      flash('You are already enrolled in this course.')
     return redirect('/profile')
   else:
     return more(cnum,snum,sem)
