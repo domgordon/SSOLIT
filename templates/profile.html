@@ -9,7 +9,13 @@
 
 <body>
   <p><a href="allcourses">View all courses</a></p>
-  <h1>My Courses</h1>
+<h1>Profile</h1>
+UNI: {{data[0][0][0]}} <br> 
+First Name: {{data[0][0][1]}} <br>
+Last Name: {{data[0][0][2]}} <br>
+School: {{data[0][0][3]}} <br>
+
+<h1>My Courses</h1>
 
 <div>
   <table style = "width:100%">
@@ -24,7 +30,7 @@
         <th>Time</th>
         <th>Professor</th>
     </tr>
-    {% for n in data %}
+    {% for n in data[1] %}
     <tr>
         {% for i in n %}
         <td>

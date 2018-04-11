@@ -176,9 +176,12 @@ def allcourses():
 
 @app.route('/profile')
 def profile():
-  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester" % (USER)
-  courses = courselister(query)
-  context = dict(data = courses)
+  query1 = "SELECT * from students_attends S where S.sid = '%s'" % (USER)
+  info = courselister(query1)
+  query2 = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester" % (USER)
+  courses = courselister(query2)
+  fin = [info,courses]
+  context = dict(data = fin)
   return render_template("profile.html", **context)
 
 
