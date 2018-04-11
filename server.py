@@ -231,6 +231,21 @@ def add():
   g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
   return redirect('/')
 
+
+
+@app.route('/enroll', methods=['POST'])
+def enroll():
+  print "HERE"
+  response = request.form['submit']
+  resp = response.split(",")
+  cnum = resp[0]
+  snum = resp[1]
+  sem = resp[2]
+  uni = 'dlg2156'
+  query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
+  g.conn.execute(query)
+  return redirect('/profile')
+
 @app.route('/enroll2', methods=['POST'])
 def enroll2():
   print "HERE!!!!!"

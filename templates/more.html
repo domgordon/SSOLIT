@@ -33,6 +33,11 @@
     <br />
   {% endfor %}
   </div>
+<form method="POST" action="/enroll">
+<button type="submit" name="submit" value={{data[0][0][0]}},{{data[0][0][1]}},{{data[0][0][2]}}>
+Enroll in this course</button>
+</form>
+
 <p><a href="another">Go to the other page</a></p>
 
 </body>
