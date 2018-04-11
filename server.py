@@ -109,8 +109,8 @@ def courselister(query):
   cursor.close()
   return courses
   
-@app.route('/')
-def index():
+@app.route('/allcourses')
+def allcourses():
   """
   request is a special object that Flask provides to access web request information:
 
@@ -162,7 +162,7 @@ def index():
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  return render_template("allcourses.html", **context)
 
 #
 # This is an example of a different path.  You can see it at:
@@ -191,7 +191,7 @@ def filter_sem():
   
   courses = courselister(query)
   context = dict(data = courses)
-  return render_template("index.html", **context)
+  return render_template("allcourses.html", **context)
 
 
 @app.route('/filter_dept', methods=['POST'])
@@ -201,7 +201,7 @@ def filter_dept():
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
   courses = courselister(query)
   context = dict(data = courses)
-  return render_template("index.html", **context)
+  return render_template("allcourses.html", **context)
 
 
 @app.route('/filter_cred', methods=['POST'])
@@ -211,7 +211,7 @@ def filter_cred():
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
   courses = courselister(query)
   context = dict(data = courses)
-  return render_template("index.html", **context)
+  return render_template("allcourses.html", **context)
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -220,11 +220,11 @@ def search():
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
   courses = courselister(query)
   context = dict(data = courses)
-  return render_template("index.html", **context)
+  return render_template("allcourses.html", **context)
 
-@app.route('/another')
-def another():
-  return render_template("another.html")
+@app.route('/')
+def index():
+  return render_template("index.html")
 
 
 @app.route('/new_user')

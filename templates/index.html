@@ -8,90 +8,12 @@
 
 
 <body>
-  <h1>Courses Offered</h1>
-  <p><a href="profile">Back to my courses</a></p>
-  
-<form method="POST" action="/search">
-  <p>Search by course number: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
-  </form>
+  <h1>You are not logged in.</h1>
 
-  <form method="POST" action="/filter_dept">
-  <p>Search by department: <input type="text" name="department"> <input type="submit" value="Search"></p>
-  </form>
+<p><a href="existing_user">Log In</a></p>
+<p><a href="new_user">Sign Up</a></p>
 
-  <form method="POST" action="/filter_sem">
-  <p>Filter by semester:
-  <select name="semester">
-    <option value="" selected disabled hidden`>Choose here</option>
-    <option value="FALL18">Fall 2018</option>
-    <option value="SPRING18">Spring 2018</option>
-    <option value="FALL17">Fall 2017</option>
-    <option value="SPRING17">Spring 2017</option>
-    <option value="FALL16">Fall 2016</option>
-    <option value="SPRING16">Spring 2016</option>
-    <option value="FALL15">Fall 2015</option>
-    <option value="SPRING15">Spring 2015</option>
-  </select>
-  <input type="submit" value="Filter by Semester">
-  </p>
-  </form>
 
-  <form method="POST" action="/filter_cred">
-  <p>Filter by number of credits:
-  <select name="credits">
-    <option value="" selected disabled hidden`>Choose here</option>
-    <option value=1>1</option>
-    <option value=2>2</option>
-    <option value=3>3</option>
-    <option value=4>4</option>
-    <option value=5>5</option>
-  </select>
-  <input type="submit" value="Filter by Credits">
-  </p>
-  </form>
-
-  <div>
-  <form method="POST" action="/enroll2">
-  <table style = "width:100%">
-    <thead> 
-      <tr>
-        <th></th>
-        <th>Course #</th>
-        <th>Name</th>
-        <th>Credits</th>
-        <th>Department</th>
-        <th>Section #</th>
-        <th>Semester</th>
-        <th>Days</th>
-	<th>Time</th>
-        <th>Professor</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for n in data %}
-    <tr>
-        <td>
-           <div class="radio">
-             <input type="radio" id='regular' name="optradio" value={{n[0]}},{{n[4]}},{{n[5]}}>
-           </div>
-        </td>
-        {% for i in n %}
-        <td>
-           <div class="radiotext">
-             {{i}}
-           </div>
-        </td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  <input type="submit" name="submit" value="See more about this course">
-  <input type="submit" name="submit" value="Enroll in this course">
-  </form>
-  </div>
-
-<p><a href="another">Log Out</a></p>
 
 </body>
 
