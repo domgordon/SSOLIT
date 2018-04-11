@@ -121,10 +121,6 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
 
-  if not request.args:
-    print "no request args"
-    return redirect('/another')
-
   #
   # example of a database query
   #
@@ -269,7 +265,6 @@ def add():
   return redirect('/')
 
 
-
 @app.route('/enroll', methods=['POST'])
 def enroll():
   print "HERE"
@@ -281,7 +276,8 @@ def enroll():
   uni = 'dlg2156'
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
   g.conn.execute(query)
-  return redirect('/profile')
+  url = '/profile?user=' + uni
+  return redirect(url)
 
 @app.route('/enroll2', methods=['POST'])
 def enroll2():
@@ -295,12 +291,16 @@ def enroll2():
   if request.form['submit'] == "Enroll in this course":
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
     g.conn.execute(query) 
-    return redirect('/profile')
+    url = '/profile?user=' + uni
+    return redirect(url)
   else:
     return more(cnum,snum,sem)
 
 @app.route('/more', methods=['POST'])
 def more(cnum,snum,sem):
+  if not request.args:
+    print "no user found"
+    return redirect('/another')
   query1 = "SELECT * from sections_available_taught S, courses_offered C WHERE S.cid=C.cid AND C.cid='%s' AND S.section_n='%s' AND S.semester='%s'" %(cnum,snum,sem)
   info = courselister(query1)
   query2 = "SELECT St.s_first_name, St.s_last_name, St.sid FROM students_attends St, enrolled_in E WHERE E.cid='%s' AND E.section_n='%s' AND E.semester='%s' AND E.sid=St.sid" %(cnum,snum,sem)
