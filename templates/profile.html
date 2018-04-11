@@ -15,7 +15,7 @@ First Name: {{data[0][0][1]}} <br>
 Last Name: {{data[0][0][2]}} <br>
 School: {{data[0][0][3]}} <br>
 
-<h1>My Courses</h1>
+<h2>Current Courses</h2>
 
 <div>
   <table style = "width:100%">
@@ -42,6 +42,33 @@ School: {{data[0][0][3]}} <br>
   </table>
   </div>
 
+
+
+<h2>Past Courses</h2>
+<div>
+  <table style = "width:100%">
+    <tr>
+        <th>Course #</th>
+        <th>Name</th>
+        <th>Credits</th>
+        <th>Department</th>
+        <th>Section #</th>
+        <th>Semester</th>
+        <th>Days</th>
+        <th>Time</th>
+        <th>Professor</th>
+    </tr>
+    {% for n in data[2] %}
+    <tr>
+        {% for i in n %}
+        <td>
+        {{i}}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
 
 <p><a href="/">Log Out</a></p>
 </body>
