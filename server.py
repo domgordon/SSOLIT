@@ -244,11 +244,6 @@ def existing_user():
   return render_template("existing_user.html")
 
 
-@app.route('/profile')
-def profile():
-  return render_template("profile.html")
-
-
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
