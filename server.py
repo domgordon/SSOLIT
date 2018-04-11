@@ -20,6 +20,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
 
+global USER
+
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
@@ -174,7 +176,7 @@ def index():
 
 @app.route('/profile')
 def profile():
-  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='dlg2156' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester"
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester" % (USER)
   courses = courselister(query)
   context = dict(data = courses)
   return render_template("profile.html", **context)
@@ -233,6 +235,8 @@ def new_user():
 @app.route('/add_user', methods=['POST'])
 def add_user():
   sid = request.form['sid']
+  global USER
+  USER = sid
   s_first_name = request.form['firstname']
   s_last_name = request.form['lastname']
   sname = request.form['sname']
@@ -251,6 +255,8 @@ def check_user():
   result = g.conn.execute("SELECT * FROM students_attends S WHERE S.sid=%s", sid)
   for row in result:
     if row['sid'] == sid:
+      global USER
+      USER = sid
       url = '/profile?user=' + sid
       return redirect(url)
   print "nah not there"
@@ -273,7 +279,7 @@ def enroll():
   cnum = resp[0]
   snum = resp[1]
   sem = resp[2]
-  uni = 'dlg2156'
+  uni = USER
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
   try:
     g.conn.execute(query)
@@ -289,7 +295,7 @@ def enroll2():
   cnum = resp[0]
   snum = resp[1]
   sem = resp[2]
-  uni = 'dlg2156'
+  uni = USER
   if request.form['submit'] == "Enroll in this course":
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
     try:
