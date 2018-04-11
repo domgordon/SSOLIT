@@ -252,9 +252,8 @@ def check_user():
     if row['sid'] == sid:
       url = '/profile?user=' + sid
       return redirect(url)
-    else:
-      print "nah not there"
-      return render_template("existing_user.html")
+  print "nah not there"
+  return render_template("existing_user.html")
 
 
 # Example of adding new data to the database
