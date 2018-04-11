@@ -121,6 +121,10 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print request.args
 
+  if not request.args:
+    print "no request args"
+    return redirect('/another')
+
   #
   # example of a database query
   #
@@ -242,6 +246,19 @@ def add_user():
 @app.route('/existing_user')
 def existing_user():
   return render_template("existing_user.html")
+
+
+@app.route('/check_user', methods=['POST'])
+def check_user():
+  sid = request.form['sid']
+  result = g.conn.execute("SELECT * FROM students_attends S WHERE S.sid=%s", sid)
+  for row in result:
+    if row['sid'] == sid:
+      url = '/profile?user=' + sid
+      return redirect(url)
+    else:
+      print "nah not there"
+      return render_template("existing_user.html")
 
 
 # Example of adding new data to the database
