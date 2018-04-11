@@ -94,6 +94,18 @@ def teardown_request(exception):
 # see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
+
+def courselister(query):
+  cursor = g.conn.execute(query)
+  courses = []
+  for result in cursor:
+    row = []
+    for i in range(0,len(result)):
+        row.append(result[i])
+    courses.append(row)
+  cursor.close()
+  return courses
+  
 @app.route('/')
 def index():
   """
@@ -112,14 +124,8 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid")
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
+  courses = courselister(query)
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -164,21 +170,54 @@ def index():
 # The functions for each app.route need to have different names
 #
 
-@app.route('/filter', methods=['POST'])
-def filter():
-  dept = request.form['department']
-  print dept
-  cursor = g.conn.execute("SELECT C.cid, C.cname, C.credits, C.dname, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname=%s",dept)
-  courses = []
-  for result in cursor:
-    row = []
-    for i in range(0,len(result)):
-        row.append(result[i])
-    courses.append(row)
-  cursor.close()
+
+@app.route('/profile')
+def profile():
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='dlg2156' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester"
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("profile.html", **context)
+
+
+
+@app.route('/filter_sem', methods=['POST'])
+def filter_sem():
+  sem = request.form['semester']
+  print sem
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester='%s'" % (sem)
+  
+  courses = courselister(query)
   context = dict(data = courses)
   return render_template("index.html", **context)
 
+
+@app.route('/filter_dept', methods=['POST'])
+def filter_dept():
+  dept = request.form['department']
+  print dept
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("index.html", **context)
+
+
+@app.route('/filter_cred', methods=['POST'])
+def filter_cred():
+  cred = request.form['credits']
+  print cred
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("index.html", **context)
+
+@app.route('/search', methods=['POST'])
+def search():
+  term = request.form['searchterm']
+  print term
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("index.html", **context)
 
 @app.route('/another')
 def another():
@@ -216,6 +255,49 @@ def add():
   cname = request.form['course']
   g.conn.execute('INSERT INTO courses_offered(cname) VALUES (%s)', cname)
   return redirect('/')
+
+
+
+@app.route('/enroll', methods=['POST'])
+def enroll():
+  print "HERE"
+  response = request.form['submit']
+  resp = response.split(",")
+  cnum = resp[0]
+  snum = resp[1]
+  sem = resp[2]
+  uni = 'dlg2156'
+  query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
+  g.conn.execute(query)
+  return redirect('/profile')
+
+@app.route('/enroll2', methods=['POST'])
+def enroll2():
+  print "HERE!!!!!"
+  response = request.form['optradio']
+  resp = response.split(",")
+  cnum = resp[0]
+  snum = resp[1]
+  sem = resp[2]
+  uni = 'dlg2156'
+  if request.form['submit'] == "Enroll in this course":
+    query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
+    g.conn.execute(query) 
+    return redirect('/profile')
+  else:
+    return more(cnum,snum,sem)
+
+@app.route('/more', methods=['POST'])
+def more(cnum,snum,sem):
+  query1 = "SELECT * from sections_available_taught S, courses_offered C WHERE S.cid=C.cid AND C.cid='%s' AND S.section_n='%s' AND S.semester='%s'" %(cnum,snum,sem)
+  info = courselister(query1)
+  query2 = "SELECT St.s_first_name, St.s_last_name, St.sid FROM students_attends St, enrolled_in E WHERE E.cid='%s' AND E.section_n='%s' AND E.semester='%s' AND E.sid=St.sid" %(cnum,snum,sem)
+  students = courselister(query2)
+  fin = [info,students]
+  #fin = students
+  context = dict(data = fin)
+  return render_template("more.html", **context)
+
 
 #@app.route('/filter')
 #def filter():

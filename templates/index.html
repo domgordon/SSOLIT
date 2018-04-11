@@ -8,41 +8,95 @@
 
 
 <body>
-  <h1>All Courses Offered</h1>
+  <h1>Courses Offered</h1>
+  <p><a href="/">View all courses</a></p>
+  
+<form method="POST" action="/search">
+  <p>Search by course number: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
+  </form>
+
+  <form method="POST" action="/filter_dept">
+  <p>Search by department: <input type="text" name="department"> <input type="submit" value="Search"></p>
+  </form>
+
+  <form method="POST" action="/filter_sem">
+  <p>Filter by semester:
+  <select name="semester">
+    <option value="" selected disabled hidden`>Choose here</option>
+    <option value="FALL18">Fall 2018</option>
+    <option value="SPRING18">Spring 2018</option>
+    <option value="FALL17">Fall 2017</option>
+    <option value="SPRING17">Spring 2017</option>
+    <option value="FALL16">Fall 2016</option>
+    <option value="SPRING16">Spring 2016</option>
+    <option value="FALL15">Fall 2015</option>
+    <option value="SPRING15">Spring 2015</option>
+  </select>
+  <input type="submit" value="Filter by Semester">
+  </p>
+  </form>
+
+  <form method="POST" action="/filter_cred">
+  <p>Filter by number of credits:
+  <select name="credits">
+    <option value="" selected disabled hidden`>Choose here</option>
+    <option value=1>1</option>
+    <option value=2>2</option>
+    <option value=3>3</option>
+    <option value=4>4</option>
+    <option value=5>5</option>
+  </select>
+  <input type="submit" value="Filter by Credits">
+  </p>
+  </form>
+
+  <form method="POST" action="/add">
+  <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+  </form>
+ 
 
   <div>
+  <form method="POST" action="/enroll2">
   <table style = "width:100%">
-    <tr>
-        <th>Number</th>
+    <thead> 
+      <tr>
+        <th></th>
+        <th>Course #</th>
         <th>Name</th>
         <th>Credits</th>
         <th>Department</th>
+        <th>Section #</th>
         <th>Semester</th>
         <th>Days</th>
 	<th>Time</th>
         <th>Professor</th>
-    </tr>
+      </tr>
+    </thead>
+    <tbody>
     {% for n in data %}
     <tr>
+        <td>
+           <div class="radio">
+             <input type="radio" id='regular' name="optradio" value={{n[0]}},{{n[4]}},{{n[5]}}>
+           </div>
+        </td>
         {% for i in n %}
         <td>
-        {{i}}
+           <div class="radiotext">
+             {{i}}
+           </div>
         </td>
         {% endfor %}
     </tr>
     {% endfor %}
+    </tbody>
   </table>
+  <input type="submit" name="submit" value="See more about this course">
+  <input type="submit" name="submit" value="Enroll in this course">
+  </form>
   </div>
 
 <p><a href="another">Go to the other page</a></p>
-
-<form method="POST" action="/filter">
-<p>Filter by department: <input type="text" name="department"> <input type="submit" value="Filter"></p>
-</form>
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
 
 </body>
 

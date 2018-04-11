@@ -8,10 +8,22 @@
 
 
 <body>
-  <h1>Your Profile</h1>
+  <p><a href="/">View all courses</a></p>
+  <h1>My Courses</h1>
 
-  <div>
-  <table>
+<div>
+  <table style = "width:100%">
+    <tr>
+        <th>Course #</th>
+        <th>Name</th>
+        <th>Credits</th>
+        <th>Department</th>
+        <th>Section #</th>
+        <th>Semester</th>
+        <th>Days</th>
+        <th>Time</th>
+        <th>Professor</th>
+    </tr>
     {% for n in data %}
     <tr>
         {% for i in n %}
@@ -19,18 +31,14 @@
         {{i}}
         </td>
         {% endfor %}
-    </th>
+    </tr>
     {% endfor %}
   </table>
   </div>
 
+
 <p><a href="another">Go to the other page</a></p>
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
-
 </body>
-
-
 </html>
+
+
