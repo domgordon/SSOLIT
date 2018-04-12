@@ -256,6 +256,8 @@ def new_user():
 @app.route('/add_user', methods=['POST'])
 def add_user():
   sid = request.form['sid']
+  if not sid:
+    return redirect('/new_user')
   global USER
   USER = sid
   s_first_name = request.form['firstname']
