@@ -21,6 +21,8 @@ from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, flash
 
 global USER
+current_sem = "SPRING18"
+next_sem = "FALL18"
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -286,6 +288,10 @@ def enroll():
   cnum = resp[0]
   snum = resp[1]
   sem = resp[2]
+  check_sem = sem.encode("utf-8")
+  if check_sem != current_sem and check_sem != next_sem:
+    flash('You can only enroll in courses offered in the current semester or the next.')
+    return redirect('/profile')
   uni = USER
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
   try:
@@ -308,6 +314,10 @@ def enroll2():
   sem = resp[2]
   uni = USER
   if request.form['submit'] == "Enroll in this course":
+    check_sem = sem.encode("utf-8")
+    if check_sem != current_sem and check_sem != next_sem:
+      flash('You can only enroll in courses offered in the current semester or the next.')
+      return redirect('/profile')
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
     try:
       g.conn.execute(query)
