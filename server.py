@@ -243,6 +243,24 @@ def search():
   context = dict(data = courses)
   return render_template("allcourses.html", **context)
 
+@app.route('/searchname', methods=['POST'])
+def searchname():
+  term = request.form['searchterm']
+  print term
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND lower(C.cname) LIKE lower('%%" + term + "%%')"
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("allcourses.html", **context)
+
+@app.route('/searchprof', methods=['POST'])
+def searchprof():
+  term = request.form['searchterm']
+  print term
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND lower(P.p_last_name) LIKE lower('%%" + term + "%%')"
+  courses = courselister(query)
+  context = dict(data = courses)
+  return render_template("allcourses.html", **context)
+
 @app.route('/')
 def index():
   return render_template("index.html")

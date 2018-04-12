@@ -12,8 +12,16 @@
   <p><a href="profile">Back to my courses</a></p>
   <p><a href="allcourses">View all courses</a></p>
 
+<form method="POST" action="/searchname">
+  <p>Search by course name: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
+  </form>
+
 <form method="POST" action="/search">
   <p>Search by course number: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
+  </form>
+
+<form method="POST" action="/searchprof">
+  <p>Search by professor last name: <input type="text" name="searchterm"> <input type="submit" value="Search"></p>
   </form>
 
   <form method="POST" action="/filter_dept">
