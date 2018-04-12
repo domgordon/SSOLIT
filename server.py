@@ -111,7 +111,20 @@ def courselister(query):
     courses.append(row)
   cursor.close()
   return courses
+
+def at_capacity(cnum,snum,sem,cap):
+  query2 = "SELECT St.s_first_name, St.s_last_name, St.sid FROM students_attends St, enrolled_in E WHERE E.cid='%s' AND E.section_n='%s' AND E.semester='%s' AND E.sid=St.sid" %(cnum,snum,sem)
+  n_students = 0
+  cursor = g.conn.execute(query)
+  for result in cursor:
+    n_students += 1
+  cursor.close()
+  if cap > n_students:
+    return False
+  else:
+    return True
   
+
 @app.route('/allcourses')
 def allcourses():
   """
@@ -130,7 +143,7 @@ def allcourses():
   #
   # example of a database query
   #
-  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
+  query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name, S.n_limit FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
   courses = courselister(query)
 
   #
@@ -284,13 +297,18 @@ def add():
 def enroll():
   print "HERE"
   response = request.form['submit']
+  print(response)
   resp = response.split(",")
   cnum = resp[0]
   snum = resp[1]
   sem = resp[2]
+  cap = int(resp[3])
   check_sem = sem.encode("utf-8")
   if check_sem != current_sem and check_sem != next_sem:
     flash('You can only enroll in courses offered in the current semester or the next.')
+    return redirect('/profile')
+  if at_capacity(cnum,snum,sem,cap):
+    flash('This class\' enrollment is at capacity.')
     return redirect('/profile')
   uni = USER
   query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
@@ -308,15 +326,20 @@ def enroll():
 def enroll2():
   print "HERE!!!!!"
   response = request.form['optradio']
+  print(response)
   resp = response.split(",")
   cnum = resp[0]
   snum = resp[1]
   sem = resp[2]
+  cap = int(resp[3])
   uni = USER
   if request.form['submit'] == "Enroll in this course":
     check_sem = sem.encode("utf-8")
     if check_sem != current_sem and check_sem != next_sem:
       flash('You can only enroll in courses offered in the current semester or the next.')
+      return redirect('/profile')
+    if at_capacity(cnum,snum,sem,cap):
+      flash('This class\' enrollment is at capacity.')
       return redirect('/profile')
     query = """INSERT INTO enrolled_in VALUES ('%s','%s','%s','%s')""" % (uni, cnum, snum, sem)
     try:
