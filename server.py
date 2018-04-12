@@ -115,7 +115,7 @@ def courselister(query):
 def at_capacity(cnum,snum,sem,cap):
   query2 = "SELECT St.s_first_name, St.s_last_name, St.sid FROM students_attends St, enrolled_in E WHERE E.cid='%s' AND E.section_n='%s' AND E.semester='%s' AND E.sid=St.sid" %(cnum,snum,sem)
   n_students = 0
-  cursor = g.conn.execute(query)
+  cursor = g.conn.execute(query2)
   for result in cursor:
     n_students += 1
   cursor.close()
