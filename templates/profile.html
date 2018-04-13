@@ -51,7 +51,31 @@ School: {{data[0][0][3]}} <br>
   </table>
   </div>
 
-
+<h2>Future Courses</h2>
+<div>
+  <table style = "width:100%">
+    <tr>
+        <th>Course #</th>
+        <th>Name</th>
+        <th>Credits</th>
+        <th>Department</th>
+        <th>Section #</th>
+        <th>Semester</th>
+        <th>Days</th>
+        <th>Time</th>
+        <th>Professor</th>
+    </tr>
+    {% for n in data[2] %}
+    <tr>
+        {% for i in n %}
+        <td>
+        {{i}}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
 
 <h2>Past Courses</h2>
 <div>
@@ -67,7 +91,7 @@ School: {{data[0][0][3]}} <br>
         <th>Time</th>
         <th>Professor</th>
     </tr>
-    {% for n in data[2] %}
+    {% for n in data[3] %}
     <tr>
         {% for i in n %}
         <td>

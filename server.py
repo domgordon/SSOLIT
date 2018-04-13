@@ -196,9 +196,11 @@ def profile():
   info = courselister(query1)
   query2 = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester AND S.semester='SPRING18'" % (USER)
   courses = courselister(query2)
-  query3 = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester AND S.semester!='SPRING18' ORDER BY S.semester" % (USER)
+  query2a = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester AND S.semester='FALL18'" % (USER)
+  coursesa = courselister(query2a)
+  query3 = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P, enrolled_in E WHERE S.cid=C.cid AND S.pid=P.pid and E.sid='%s' and E.cid=S.cid and E.section_n=S.section_n and E.semester=S.semester AND S.semester!='SPRING18' AND S.semester!='FALL18' ORDER BY S.semester" % (USER)
   past = courselister(query3)
-  fin = [info,courses,past]
+  fin = [info,courses,coursesa,past]
   context = dict(data = fin)
   return render_template("profile.html", **context)
 
