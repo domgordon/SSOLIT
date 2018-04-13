@@ -4,7 +4,9 @@ Dominique Gordon dlg2156 and Andres Aguayo aa3642
 SSOLIT
 
 1) PostgreSQL account: aa3642
+   
    Password: 5693
+   
    If it's helpful: psql -U aa3642 -h 35.227.79.146 -d proj1part2
 
 2) run the following command within the SSOLIT directory:
