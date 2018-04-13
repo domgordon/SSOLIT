@@ -123,6 +123,12 @@ def at_capacity(cnum,snum,sem,cap):
     return False
   else:
     return True
+
+def reload():
+    query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name, S.n_limit FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid"
+    courses = courselister(query)
+    context = dict(data = courses)
+    return context 
   
 
 @app.route('/allcourses')
@@ -208,18 +214,25 @@ def profile():
 
 @app.route('/filter_sem', methods=['POST'])
 def filter_sem():
+  if not request.form:
+    context = reload()
+    return render_template("allcourses.html", **context)
   sem = request.form['semester']
   print sem
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND S.semester='%s'" % (sem)
   
   courses = courselister(query)
   context = dict(data = courses)
+  print "we"
   return render_template("allcourses.html", **context)
 
 
 @app.route('/filter_dept', methods=['POST'])
 def filter_dept():
   dept = request.form['department']
+  if not dept:
+    context = reload()
+    return render_template("allcourses.html", **context)
   print dept
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.dname='%s'" % (dept)
   courses = courselister(query)
@@ -229,6 +242,9 @@ def filter_dept():
 
 @app.route('/filter_cred', methods=['POST'])
 def filter_cred():
+  if not request.form:
+    context = reload()
+    return render_template("allcourses.html", **context)
   cred = request.form['credits']
   print cred
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.credits='%s'" % (cred)
@@ -239,6 +255,9 @@ def filter_cred():
 @app.route('/search', methods=['POST'])
 def search():
   term = request.form['searchterm']
+  if not term:
+    context = reload()
+    return render_template("allcourses.html", **context)
   print term
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND C.cid='%s'" % (term)
   courses = courselister(query)
@@ -248,6 +267,9 @@ def search():
 @app.route('/searchname', methods=['POST'])
 def searchname():
   term = request.form['searchterm']
+  if not term:
+    context = reload()
+    return render_template("allcourses.html", **context)
   print term
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND lower(C.cname) LIKE lower('%%" + term + "%%')"
   courses = courselister(query)
@@ -257,6 +279,9 @@ def searchname():
 @app.route('/searchprof', methods=['POST'])
 def searchprof():
   term = request.form['searchterm']
+  if not term:
+    context = reload()
+    return render_template("allcourses.html", **context)
   print term
   query = "SELECT DISTINCT C.cid, C.cname, C.credits, C.dname, S.section_n, S.semester, S.days, S.section_time, P.p_last_name FROM courses_offered C, sections_available_taught S, professors_works P WHERE S.cid=C.cid AND S.pid=P.pid AND lower(P.p_last_name) LIKE lower('%%" + term + "%%')"
   courses = courselister(query)
